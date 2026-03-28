@@ -3,7 +3,7 @@ import path from 'path';
 import { getAgentStatus } from '../services/yamlService';
 import { Agent, AgentDetail } from '../types/agent';
 
-const AVENGERS_ROOT = process.env.AVENGERS_ROOT ?? '/Users/mad-tmng/avengers';
+const AVENGERS_ROOT = process.env.AVENGERS_ROOT ?? '/Users/mad-tmng/multi-agent-avengers';
 
 const AGENT_META: Pick<Agent, 'id' | 'name' | 'role'>[] = [
   { id: 'jarvis',   name: 'JARVIS',          role: '司令塔・窓口' },
@@ -18,7 +18,7 @@ const AGENT_META: Pick<Agent, 'id' | 'name' | 'role'>[] = [
 const VALID_IDS = new Set(AGENT_META.map(a => a.id));
 
 function inboxPath(agentId: string): string {
-  return path.join(AVENGERS_ROOT, 'comms', 'inbox', `${agentId}.yaml`);
+  return path.join(AVENGERS_ROOT, 'queue', 'inbox', `${agentId}.yaml`);
 }
 
 function buildAgent(meta: typeof AGENT_META[number]): Agent {

@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import * as fs from 'fs';
 import * as path from 'path';
 
-const INBOX_PATH = path.join(process.env.HOME!, 'avengers/comms/inbox/jarvis.yaml');
+const INBOX_PATH = path.join(process.env.HOME!, 'multi-agent-avengers/queue/inbox/jarvis.yaml');
 
 test.describe('指示送信（/send）', () => {
   test.beforeEach(async ({ page }) => {

@@ -3,7 +3,7 @@
 import { execFile } from 'child_process';
 import path from 'path';
 
-const AVENGERS_ROOT = process.env.AVENGERS_ROOT ?? '/Users/mad-tmng/avengers';
+const AVENGERS_ROOT = process.env.AVENGERS_ROOT ?? '/Users/mad-tmng/multi-agent-avengers';
 const INBOX_WRITE_SH = path.join(AVENGERS_ROOT, 'scripts', 'inbox_write.sh');
 
 export function sendMessage(

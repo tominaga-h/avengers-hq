@@ -3,8 +3,8 @@
 import fs from 'fs';
 import path from 'path';
 
-const AVENGERS_ROOT = process.env.AVENGERS_ROOT ?? '/Users/mad-tmng/avengers';
-const DASHBOARD_PATH = path.join(AVENGERS_ROOT, 'dashboard', 'dashboard.md');
+const AVENGERS_ROOT = process.env.AVENGERS_ROOT ?? '/Users/mad-tmng/multi-agent-avengers';
+const DASHBOARD_PATH = path.join(AVENGERS_ROOT, 'dashboard.md');
 
 export function getDashboard(): { content: string; last_modified: string } {
   if (!fs.existsSync(DASHBOARD_PATH)) {

@@ -2,11 +2,11 @@ import { Request, Response } from 'express';
 import path from 'path';
 import { readInbox, writeInbox } from '../services/yamlService';
 
-const AVENGERS_ROOT = process.env.AVENGERS_ROOT ?? '/Users/mad-tmng/avengers';
+const AVENGERS_ROOT = process.env.AVENGERS_ROOT ?? '/Users/mad-tmng/multi-agent-avengers';
 const VALID_AGENTS = ['jarvis', 'tony', 'bruce', 'cap', 'marvel', 'peter', 'starlord'];
 
 function inboxPath(agent: string): string {
-  return path.join(AVENGERS_ROOT, 'comms', 'inbox', `${agent}.yaml`);
+  return path.join(AVENGERS_ROOT, 'queue', 'inbox', `${agent}.yaml`);
 }
 
 export function getInbox(req: Request, res: Response): void {
