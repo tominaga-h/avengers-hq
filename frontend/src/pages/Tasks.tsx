@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from 'react-query';
+import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import client from '../api/client';
@@ -132,7 +133,11 @@ export function Tasks() {
                   className="w-full text-left px-5 py-4 flex items-center gap-4 hover:bg-white/5 transition-colors"
                   onClick={() => toggle(cmd.id)}
                 >
-                  <span className="text-blue-400 font-mono font-bold text-sm w-20 shrink-0">{cmd.id}</span>
+                  <Link
+                    to={`/tasks/${cmd.id}`}
+                    className="text-blue-400 font-mono font-bold text-sm w-20 shrink-0 hover:underline"
+                    onClick={e => e.stopPropagation()}
+                  >{cmd.id}</Link>
                   <span className="text-white text-sm flex-1 truncate">{cmd.purpose ?? '（説明なし）'}</span>
                   <div className="flex items-center gap-3 shrink-0">
                     {cmd.priority && (
@@ -149,14 +154,18 @@ export function Tasks() {
                       <p className="text-gray-500 text-xs py-2">サブタスクなし</p>
                     ) : (
                       cmd.subtasks.map(sub => (
-                        <div key={sub.task_id} className="flex items-center gap-4 text-sm py-1.5">
+                        <Link
+                          key={sub.task_id}
+                          to={`/tasks/${sub.task_id}`}
+                          className="w-full flex items-center gap-4 text-sm py-1.5 rounded-lg px-2 -mx-2 hover:bg-white/5 transition-colors"
+                        >
                           <span className="text-gray-400 font-mono text-xs w-28 shrink-0">
                             {AGENT_NAMES[sub.agent] ?? sub.agent}
                           </span>
-                          <span className="text-gray-300 font-mono text-xs shrink-0">{sub.task_id}</span>
-                          <span className="text-gray-500 text-xs flex-1 truncate">{sub.description ?? ''}</span>
+                          <span className="text-blue-400 font-mono text-xs shrink-0 hover:underline">{sub.task_id}</span>
+                          <span className="text-gray-500 text-xs flex-1 truncate text-left">{sub.description ?? ''}</span>
                           {statusBadge(sub.status)}
-                        </div>
+                        </Link>
                       ))
                     )}
                   </div>
@@ -179,12 +188,20 @@ export function Tasks() {
               const summary = (sub.description ?? '').split('\n').find(l => l.trim()) ?? '';
               return (
                 <div key={sub.task_id} className="bg-shield-card border border-shield-border rounded-xl overflow-hidden">
-                  <button
-                    className="w-full text-left px-5 py-4 flex items-center gap-4 hover:bg-white/5 transition-colors"
+                  <div
+                    className="w-full text-left px-5 py-4 flex items-center gap-4 hover:bg-white/5 transition-colors cursor-pointer"
                     onClick={() => toggle(sub.task_id)}
                   >
-                    <span className="text-blue-400 font-mono font-bold text-xs shrink-0">{sub.parentCmd}</span>
-                    <span className="text-gray-300 font-mono text-xs shrink-0">{sub.task_id}</span>
+                    <Link
+                      to={`/tasks/${sub.parentCmd}`}
+                      className="text-blue-400 font-mono font-bold text-xs shrink-0 hover:underline"
+                      onClick={e => e.stopPropagation()}
+                    >{sub.parentCmd}</Link>
+                    <Link
+                      to={`/tasks/${sub.task_id}`}
+                      className="text-gray-300 font-mono text-xs shrink-0 hover:text-blue-400 hover:underline"
+                      onClick={e => e.stopPropagation()}
+                    >{sub.task_id}</Link>
                     <span className="text-gray-400 font-mono text-xs w-24 shrink-0">
                       {AGENT_NAMES[sub.agent] ?? sub.agent}
                     </span>
@@ -193,7 +210,7 @@ export function Tasks() {
                       {statusBadge(sub.status)}
                       <span className="text-gray-500 text-xs">{expanded[sub.task_id] ? '▲' : '▼'}</span>
                     </div>
-                  </button>
+                  </div>
 
                   {expanded[sub.task_id] && (
                     <div className="border-t border-shield-border">

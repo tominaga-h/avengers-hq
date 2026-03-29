@@ -4,6 +4,7 @@ import { Header } from './components/layout/Header';
 import { Sidebar } from './components/layout/Sidebar';
 import { Dashboard } from './pages/Dashboard';
 import { Tasks } from './pages/Tasks';
+import { TaskDetail } from './pages/TaskDetail';
 import { Agents } from './pages/Agents';
 import { AgentDetail } from './pages/AgentDetail';
 import { SendMessage } from './pages/SendMessage';
@@ -23,6 +24,7 @@ export default function App() {
             <Routes>
               <Route path="/"           element={<Dashboard />} />
               <Route path="/tasks"      element={<Tasks />} />
+              <Route path="/tasks/:id" element={<TaskDetail />} />
               <Route path="/agents"     element={<Agents />} />
               <Route path="/agents/:id" element={<AgentDetail />} />
               <Route path="/send"       element={<SendMessage />} />
