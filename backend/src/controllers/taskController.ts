@@ -67,6 +67,7 @@ export function listTasks(_req: Request, res: Response): void {
       .map(({ agent, task }) => ({
         task_id: task.task_id,
         agent,
+        description: task.description ?? null,
         status: task.status ?? null,
         working_dir: task.working_dir ?? null,
       })),

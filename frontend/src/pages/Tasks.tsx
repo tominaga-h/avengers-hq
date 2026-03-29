@@ -5,6 +5,7 @@ import client from '../api/client';
 type SubTask = {
   task_id: string;
   agent: string;
+  description: string | null;
   status: string | null;
   working_dir: string | null;
 };
@@ -119,7 +120,8 @@ export function Tasks() {
                       <span className="text-gray-400 font-mono text-xs w-28 shrink-0">
                         {AGENT_NAMES[sub.agent] ?? sub.agent}
                       </span>
-                      <span className="text-gray-300 font-mono text-xs flex-1 truncate">{sub.task_id}</span>
+                      <span className="text-gray-300 font-mono text-xs shrink-0">{sub.task_id}</span>
+                      <span className="text-gray-500 text-xs flex-1 truncate">{sub.description ?? ''}</span>
                       {statusBadge(sub.status)}
                     </div>
                   ))
