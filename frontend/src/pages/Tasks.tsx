@@ -80,7 +80,7 @@ export function Tasks() {
     );
   }
 
-  const commands: Command[] = data?.commands ?? [];
+  const commands: Command[] = [...(data?.commands ?? [])].sort((a, b) => b.id.localeCompare(a.id));
 
   return (
     <div className="space-y-4">
