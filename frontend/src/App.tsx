@@ -10,6 +10,8 @@ import { AgentDetail } from './pages/AgentDetail';
 import { SendMessage } from './pages/SendMessage';
 import { Inbox } from './pages/Inbox';
 import { Alerts } from './pages/Alerts';
+import { Contexts } from './pages/Contexts';
+import { ContextView } from './pages/ContextView';
 
 export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -30,6 +32,8 @@ export default function App() {
               <Route path="/send"       element={<SendMessage />} />
               <Route path="/inbox"      element={<Inbox />} />
               <Route path="/alerts"     element={<Alerts />} />
+              <Route path="/contexts"  element={<Contexts />} />
+              <Route path="/contexts/*" element={<ContextView />} />
             </Routes>
           </main>
         </div>

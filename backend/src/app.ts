@@ -11,6 +11,7 @@ import messagesRouter from './routes/messages';
 import tasksRouter from './routes/tasks';
 import dashboardRouter from './routes/dashboard';
 import alertsRouter from './routes/alerts';
+import contextsRouter from './routes/contexts';
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use('/api/messages', messagesRouter);
 app.use('/api/tasks', tasksRouter);
 app.use('/api/dashboard', dashboardRouter);
 app.use('/api/alerts', alertsRouter);
+app.use('/api/contexts', contextsRouter);
 
 app.use(errorHandler);
 
