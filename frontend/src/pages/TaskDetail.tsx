@@ -19,6 +19,10 @@ type Command = {
   status: string | null;
   priority: string | null;
   timestamp: string | null;
+  north_star: string | null;
+  command: string | null;
+  acceptance_criteria: string[];
+  project: string | null;
   subtasks: SubTask[];
 };
 
@@ -98,7 +102,7 @@ export function TaskDetail() {
   for (const cmd of commands) {
     const sub = cmd.subtasks.find(s => s.task_id === id);
     if (sub) {
-      return <SubtaskDetail subtask={sub} parentCmd={cmd.id} />;
+      return <SubtaskDetail subtask={sub} parentCmd={cmd} />;
     }
   }
 
@@ -123,19 +127,61 @@ function CommandDetail({ command }: { command: Command }) {
       </Link>
 
       {/* ヘッダー */}
-      <div className="bg-shield-card border border-shield-border rounded-xl p-5 space-y-3">
+      <div className="bg-shield-card border border-shield-border rounded-xl p-5 space-y-4">
         <div className="flex items-center gap-4">
           <span className="text-blue-400 font-mono font-bold text-lg">{command.id}</span>
           {statusBadge(command.status)}
           {command.priority && (
             <span className="text-xs text-gray-400 font-mono">{command.priority}</span>
           )}
+          {command.project && (
+            <span className="text-xs text-gray-500 font-mono">{command.project}</span>
+          )}
         </div>
-        <p className="text-white text-sm">{command.purpose ?? '（説明なし）'}</p>
+        <p className="text-white">{command.purpose ?? '（説明なし）'}</p>
+        {command.north_star && (
+          <div className="flex gap-3 text-sm">
+            <span className="text-gray-500 shrink-0">North Star:</span>
+            <span className="text-avengers-gold text-sm">{command.north_star}</span>
+          </div>
+        )}
         {command.timestamp && (
           <p className="text-gray-500 text-xs font-mono">{command.timestamp}</p>
         )}
       </div>
+
+      {/* 指令内容 */}
+      {command.command && (
+        <div>
+          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">
+            指令内容
+          </h2>
+          <div className="bg-shield-card border border-shield-border rounded-xl p-6 prose prose-invert prose-sm max-w-none">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {command.command}
+            </ReactMarkdown>
+          </div>
+        </div>
+      )}
+
+      {/* 受け入れ基準 */}
+      {command.acceptance_criteria.length > 0 && (
+        <div>
+          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">
+            受け入れ基準
+          </h2>
+          <div className="bg-shield-card border border-shield-border rounded-xl p-5">
+            <ul className="space-y-2">
+              {command.acceptance_criteria.map((ac, i) => (
+                <li key={i} className="flex gap-3 text-sm">
+                  <span className="text-green-500 shrink-0">&#x2713;</span>
+                  <span className="text-gray-300">{ac}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
 
       {/* サブタスク一覧 */}
       <div>
@@ -169,11 +215,11 @@ function CommandDetail({ command }: { command: Command }) {
   );
 }
 
-function SubtaskDetail({ subtask, parentCmd }: { subtask: SubTask; parentCmd: string }) {
+function SubtaskDetail({ subtask, parentCmd }: { subtask: SubTask; parentCmd: Command }) {
   return (
     <div className="space-y-6">
-      <Link to="/tasks" className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white">
-        <ArrowLeft size={14} /> タスク一覧に戻る
+      <Link to={`/tasks/${parentCmd.id}`} className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white">
+        <ArrowLeft size={14} /> {parentCmd.id} に戻る
       </Link>
 
       {/* ヘッダー */}
@@ -184,9 +230,10 @@ function SubtaskDetail({ subtask, parentCmd }: { subtask: SubTask; parentCmd: st
         </div>
         <div className="flex items-center gap-4 text-sm">
           <span className="text-gray-500">親タスク:</span>
-          <Link to={`/tasks/${parentCmd}`} className="text-blue-400 font-mono text-sm hover:underline">
-            {parentCmd}
+          <Link to={`/tasks/${parentCmd.id}`} className="text-blue-400 font-mono text-sm hover:underline">
+            {parentCmd.id}
           </Link>
+          <span className="text-gray-500 text-xs truncate">{parentCmd.purpose}</span>
         </div>
         <div className="flex items-center gap-4 text-sm">
           <span className="text-gray-500">実行者:</span>

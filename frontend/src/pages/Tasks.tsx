@@ -19,6 +19,10 @@ type Command = {
   status: string | null;
   priority: string | null;
   timestamp: string | null;
+  north_star: string | null;
+  command: string | null;
+  acceptance_criteria: string[];
+  project: string | null;
   subtasks: SubTask[];
 };
 
@@ -94,6 +98,20 @@ export function Tasks() {
 
   const commands: Command[] = [...(data?.commands ?? [])].sort((a, b) => b.id.localeCompare(a.id));
 
+  // North Star でグルーピング（出現順を維持）
+  const groupedByNorthStar: { northStar: string; commands: Command[] }[] = [];
+  const nsMap = new Map<string, Command[]>();
+  for (const cmd of commands) {
+    const ns = cmd.north_star ?? '（North Star なし）';
+    let group = nsMap.get(ns);
+    if (!group) {
+      group = [];
+      nsMap.set(ns, group);
+      groupedByNorthStar.push({ northStar: ns, commands: group });
+    }
+    group.push(cmd);
+  }
+
   const allSubtasks = commands.flatMap(cmd =>
     cmd.subtasks.map(sub => ({ ...sub, parentCmd: cmd.id }))
   ).sort((a, b) => b.task_id.localeCompare(a.task_id));
@@ -126,50 +144,65 @@ export function Tasks() {
             <p className="text-gray-500 text-sm text-center py-8">コマンドなし</p>
           </div>
         ) : (
-          <div className="space-y-3">
-            {commands.map(cmd => (
-              <div key={cmd.id} className="bg-shield-card border border-shield-border rounded-xl overflow-hidden">
-                <button
-                  className="w-full text-left px-5 py-4 flex items-center gap-4 hover:bg-white/5 transition-colors"
-                  onClick={() => toggle(cmd.id)}
-                >
-                  <Link
-                    to={`/tasks/${cmd.id}`}
-                    className="text-blue-400 font-mono font-bold text-sm w-20 shrink-0 hover:underline"
-                    onClick={e => e.stopPropagation()}
-                  >{cmd.id}</Link>
-                  <span className="text-white text-sm flex-1 truncate">{cmd.purpose ?? '（説明なし）'}</span>
-                  <div className="flex items-center gap-3 shrink-0">
-                    {cmd.priority && (
-                      <span className="text-xs text-gray-400 font-mono">{cmd.priority}</span>
-                    )}
-                    {statusBadge(cmd.status)}
-                    <span className="text-gray-500 text-xs">{expanded[cmd.id] ? '▲' : '▼'}</span>
+          <div className="space-y-5">
+            {groupedByNorthStar.map(group => (
+              <div key={group.northStar} className="bg-shield-card border border-shield-border rounded-xl overflow-hidden">
+                {/* North Star ヘッダー */}
+                <div className="px-5 py-3 border-b border-shield-border bg-white/[0.02]">
+                  <div className="flex items-start gap-2">
+                    <span className="text-avengers-gold text-sm mt-0.5 shrink-0">&#x2605;</span>
+                    <span className="text-sm font-semibold text-avengers-gold leading-relaxed">{group.northStar}</span>
                   </div>
-                </button>
+                </div>
 
-                {expanded[cmd.id] && (
-                  <div className="border-t border-shield-border px-5 py-4 space-y-2.5">
-                    {cmd.subtasks.length === 0 ? (
-                      <p className="text-gray-500 text-xs py-2">サブタスクなし</p>
-                    ) : (
-                      cmd.subtasks.map(sub => (
+                {/* cmd 一覧 */}
+                <div className="divide-y divide-shield-border">
+                  {group.commands.map(cmd => (
+                    <div key={cmd.id}>
+                      <button
+                        className="w-full text-left px-5 py-3.5 flex items-center gap-4 hover:bg-white/5 transition-colors"
+                        onClick={() => toggle(cmd.id)}
+                      >
                         <Link
-                          key={sub.task_id}
-                          to={`/tasks/${sub.task_id}`}
-                          className="w-full flex items-center gap-4 text-sm py-1.5 rounded-lg px-2 -mx-2 hover:bg-white/5 transition-colors"
-                        >
-                          <span className="text-gray-400 font-mono text-xs w-28 shrink-0">
-                            {AGENT_NAMES[sub.agent] ?? sub.agent}
-                          </span>
-                          <span className="text-blue-400 font-mono text-xs shrink-0 hover:underline">{sub.task_id}</span>
-                          <span className="text-gray-500 text-xs flex-1 truncate text-left">{sub.description ?? ''}</span>
-                          {statusBadge(sub.status)}
-                        </Link>
-                      ))
-                    )}
-                  </div>
-                )}
+                          to={`/tasks/${cmd.id}`}
+                          className="text-blue-400 font-mono font-bold text-sm w-20 shrink-0 hover:underline"
+                          onClick={e => e.stopPropagation()}
+                        >{cmd.id}</Link>
+                        <span className="text-white text-sm flex-1 truncate">{cmd.purpose ?? '（説明なし）'}</span>
+                        <div className="flex items-center gap-3 shrink-0">
+                          {cmd.priority && (
+                            <span className="text-xs text-gray-400 font-mono">{cmd.priority}</span>
+                          )}
+                          {statusBadge(cmd.status)}
+                          <span className="text-gray-500 text-xs">{expanded[cmd.id] ? '▲' : '▼'}</span>
+                        </div>
+                      </button>
+
+                      {expanded[cmd.id] && (
+                        <div className="border-t border-shield-border/50 bg-white/[0.01] px-5 py-4 space-y-2.5">
+                          {cmd.subtasks.length === 0 ? (
+                            <p className="text-gray-500 text-xs py-2">サブタスクなし</p>
+                          ) : (
+                            cmd.subtasks.map(sub => (
+                              <Link
+                                key={sub.task_id}
+                                to={`/tasks/${sub.task_id}`}
+                                className="w-full flex items-center gap-4 text-sm py-1.5 rounded-lg px-2 -mx-2 hover:bg-white/5 transition-colors"
+                              >
+                                <span className="text-gray-400 font-mono text-xs w-28 shrink-0">
+                                  {AGENT_NAMES[sub.agent] ?? sub.agent}
+                                </span>
+                                <span className="text-blue-400 font-mono text-xs shrink-0 hover:underline">{sub.task_id}</span>
+                                <span className="text-gray-500 text-xs flex-1 truncate text-left">{sub.description ?? ''}</span>
+                                {statusBadge(sub.status)}
+                              </Link>
+                            ))
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             ))}
           </div>

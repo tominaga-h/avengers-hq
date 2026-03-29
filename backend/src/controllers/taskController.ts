@@ -14,6 +14,9 @@ interface FuryCommand {
   priority?: string;
   timestamp?: string;
   north_star?: string;
+  command?: string;
+  acceptance_criteria?: string[];
+  project?: string;
 }
 
 interface FuryToJarvisYaml {
@@ -62,6 +65,10 @@ export function listTasks(_req: Request, res: Response): void {
     status: cmd.status ?? null,
     priority: cmd.priority ?? null,
     timestamp: cmd.timestamp ?? null,
+    north_star: cmd.north_star ?? null,
+    command: cmd.command ?? null,
+    acceptance_criteria: cmd.acceptance_criteria ?? [],
+    project: cmd.project ?? null,
     subtasks: workerTasks
       .filter(({ task }) => task.parent_cmd === cmd.id)
       .map(({ agent, task }) => ({
