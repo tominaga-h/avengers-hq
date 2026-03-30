@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="a" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#b45309"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <!-- Shield shape -->
+  <path d="M32 2 L58 14 V34 C58 48 46 58 32 62 C18 58 6 48 6 34 V14 Z" fill="url(#bg)" stroke="url(#a)" stroke-width="2.5" stroke-linejoin="round"/>
+  <!-- Inner edge line -->
+  <path d="M32 7 L54 17.5 V34 C54 46 43.5 54.5 32 58 C20.5 54.5 10 46 10 34 V17.5 Z" fill="none" stroke="#fbbf2430" stroke-width="0.8"/>
+  <!-- Bold A letterform -->
+  <g filter="url(#glow)">
+    <path d="M32 13 L21 50 H26.5 L29 42 H35 L37.5 50 H43 Z" fill="url(#a)"/>
+    <path d="M32 24 L29.8 38 H34.2 Z" fill="#0f172a"/>
+  </g>
+  <!-- Arrow accent -->
+  <path d="M24 30 L32 16 L40 30" fill="none" stroke="#fbbf24" stroke-width="0.6" opacity="0.3"/>
+</svg>
