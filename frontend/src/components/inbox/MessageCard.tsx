@@ -1,8 +1,31 @@
-import { useState } from 'react';
+import { useState, ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { Message } from '../../types/message';
 import { AGENT_ICONS } from '../../utils/constants';
 import { formatTimestamp } from '../../utils/format';
+
+const TASK_ID_RE = /\b([A-Z]+-\d+)\b/g;
+const TASK_TYPES = new Set(['task_assigned', 'report_completed']);
+
+function linkifyTaskIds(text: string, type: string): ReactNode {
+  if (!TASK_TYPES.has(type)) return text;
+  const parts: ReactNode[] = [];
+  let lastIndex = 0;
+  for (const match of text.matchAll(TASK_ID_RE)) {
+    const id = match[1];
+    const start = match.index!;
+    if (start > lastIndex) parts.push(text.slice(lastIndex, start));
+    parts.push(
+      <Link key={start} to={`/tasks/${id}`} className="text-blue-400 font-mono hover:underline" onClick={e => e.stopPropagation()}>
+        {id}
+      </Link>
+    );
+    lastIndex = start + match[0].length;
+  }
+  if (lastIndex < text.length) parts.push(text.slice(lastIndex));
+  return parts.length > 0 ? parts : text;
+}
 
 const TYPE_LABELS: Record<string, string> = {
   task_assigned:    'タスク',
@@ -48,7 +71,7 @@ export function MessageCard({ message, onMarkRead }: Props) {
           <div className="flex items-center gap-2 mt-0.5">
             <span className="text-xs text-gray-400">{formatTimestamp(message.timestamp)}</span>
             {!expanded && (
-              <span className="text-xs text-gray-500 truncate">{preview}</span>
+              <span className="text-xs text-gray-500 truncate">{linkifyTaskIds(preview, message.type)}</span>
             )}
           </div>
         </div>
@@ -61,7 +84,7 @@ export function MessageCard({ message, onMarkRead }: Props) {
       <div className={`overflow-hidden transition-all duration-200 ${expanded ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'}`}>
         <div className="px-4 pb-4">
           <p className="text-sm text-gray-300 whitespace-pre-wrap leading-relaxed border-t border-shield-border pt-3">
-            {message.content}
+            {linkifyTaskIds(message.content, message.type)}
           </p>
           {!message.read && onMarkRead && (
             <button

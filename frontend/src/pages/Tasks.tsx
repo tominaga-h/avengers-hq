@@ -168,7 +168,12 @@ export function Tasks() {
                           className="text-blue-400 font-mono font-bold text-sm w-20 shrink-0 hover:underline"
                           onClick={e => e.stopPropagation()}
                         >{cmd.id}</Link>
-                        <span className="text-white text-sm flex-1 truncate">{cmd.purpose ?? '（説明なし）'}</span>
+                        <div className="flex-1 min-w-0">
+                          <span className="text-white text-sm truncate block">{cmd.purpose ?? '（説明なし）'}</span>
+                          {cmd.subtasks[0]?.working_dir && (
+                            <code className="text-xs text-gray-500 bg-white/[0.04] px-1.5 py-0.5 rounded mt-1 inline-block truncate max-w-full">{cmd.subtasks[0].working_dir}</code>
+                          )}
+                        </div>
                         <div className="flex items-center gap-3 shrink-0">
                           {cmd.priority && (
                             <span className="text-xs text-gray-400 font-mono">{cmd.priority}</span>
